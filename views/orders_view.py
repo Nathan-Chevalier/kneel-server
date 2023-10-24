@@ -1,0 +1,2 @@
+class OrdersView:
+    pass

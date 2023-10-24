@@ -1,0 +1,2 @@
+class StylesView:
+    pass
