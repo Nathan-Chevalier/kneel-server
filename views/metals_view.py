@@ -25,3 +25,5 @@ class MetalsView:
 
             return handler.response(serialized_metals, status.HTTP_200_SUCCESS.value)
     
+    def add(self, handler, data):
+        return handler.response("", status.HTTP_405_UNSUPPORTED_METHOD.value)
