@@ -58,3 +58,18 @@ INSERT INTO Orders ('styleId', 'sizeId', 'metalId') VALUES (1, 2, 5);
 INSERT INTO Orders ('styleId', 'sizeId', 'metalId') VALUES (2, 3, 1);
 INSERT INTO Orders ('styleId', 'sizeId', 'metalId') VALUES (4, 5, 3);
 INSERT INTO Orders ('styleId', 'sizeId', 'metalId') VALUES (5, 1, 4);
+
+-- TEST QUERIES
+
+SELECT 
+    m.id,
+    m.metal,
+    m.price
+FROM Metals m;
+
+SELECT
+    m.id,
+    m.metal,
+    m.price
+FROM Metals m
+WHERE m.id = ?;

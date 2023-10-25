@@ -11,7 +11,7 @@ def db_get_single(sql, pk) -> sqlite3.Row:
     Returns:
         sqlite3.Row: The row object representing the retrieved row
     """
-    with sqlite3.connect("./shipping.db") as conn:
+    with sqlite3.connect("./kneeldiamonds.sqlite3") as conn:
         conn.row_factory = sqlite3.Row
         db_cursor = conn.cursor()
         db_cursor.execute(sql, (pk,))
@@ -27,7 +27,7 @@ def db_get_all(sql) -> list:
     Returns:
         list: List of sqlite3.Row objects
     """
-    with sqlite3.connect("./shipping.db") as conn:
+    with sqlite3.connect("./kneeldiamonds.sqlite3") as conn:
         conn.row_factory = sqlite3.Row
         db_cursor = conn.cursor()
         db_cursor.execute(sql)
@@ -44,7 +44,7 @@ def db_delete(sql, pk) -> int:
     Returns:
         int: Number of rows deleted
     """
-    with sqlite3.connect("./shipping.db") as conn:
+    with sqlite3.connect("./kneeldiamonds.sqlite3") as conn:
         conn.row_factory = sqlite3.Row
         db_cursor = conn.cursor()
         db_cursor.execute(sql, (pk,))
@@ -61,7 +61,7 @@ def db_update(sql, data_tuple) -> int:
     Returns:
         int: Number of rows updated
     """
-    with sqlite3.connect("./shipping.db") as conn:
+    with sqlite3.connect("./kneeldiamonds.sqlite3") as conn:
         conn.row_factory = sqlite3.Row
         db_cursor = conn.cursor()
         db_cursor.execute(sql, data_tuple)
@@ -77,7 +77,7 @@ def db_create(sql, data_tuple) -> int:
     Returns:
         int: The new id of the created row
     """
-    with sqlite3.connect("./shipping.db") as conn:
+    with sqlite3.connect("./kneeldiamonds.sqlite3") as conn:
         conn.row_factory = sqlite3.Row
         db_cursor = conn.cursor()
         db_cursor.execute(sql, data_tuple)
