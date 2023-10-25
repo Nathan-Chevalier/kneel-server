@@ -73,3 +73,10 @@ SELECT
     m.price
 FROM Metals m
 WHERE m.id = ?;
+
+SELECT
+m.id,
+m.metal,
+m.price
+FROM Metals m
+WHERE m.id = 1;
