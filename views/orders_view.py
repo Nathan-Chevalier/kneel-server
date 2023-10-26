@@ -1,6 +1,6 @@
 import json
 from nss_handler import status
-from repository import db_get_single, db_get_all
+from repository import db_get_single, db_get_all, db_create
 
 class OrdersView:
     def get(self, handler, pk):
@@ -125,7 +125,23 @@ class OrdersView:
             return handler.response(serialized_orders, status.HTTP_200_SUCCESS.value)
     
     def add(self, handler, data):
-        return handler.response("", status.HTTP_405_UNSUPPORTED_METHOD.value)
+        sql = """
+        INSERT INTO Orders ('styleId', 'sizeId', 'metalId') VALUES (?, ?, ?)
+        """
+        object_id = db_create(sql, (data['styleId'], data['sizeId'], data['metalId']))
+        response_sql = "SELECT o.id, o.styleId, o.sizeId, o.metalId FROM Orders o where o.id = ?"
+        query_response = db_get_single(response_sql, object_id)
+        serialized_order = {
+            "id": query_response["id"],
+            "styleId": query_response["styleId"],
+            "sizeId": query_response['sizeId'],
+            "metalId": query_response['metalId']
+        }
+        post_response = json.dumps(serialized_order)
+        if object_id > 0:
+            return handler.response(post_response, status.HTTP_201_SUCCESS_CREATED.value)
+        else:
+            return handler.response("", status.HTTP_400_CLIENT_ERROR_BAD_REQUEST_DATA.value)
     
     def update(self, handler, data, pk):
         return handler.response("", status.HTTP_405_UNSUPPORTED_METHOD.value)

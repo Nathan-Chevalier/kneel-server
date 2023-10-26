@@ -78,3 +78,5 @@ LEFT JOIN Styles ON o.styleId = Styles.id
 LEFT JOIN Metals ON o.metalId = Metals.id
 LEFT JOIN Sizes ON o.sizeId = Sizes.id
 GROUP BY o.id;
+
+SELECT o.id, o.styleId, o.sizeId, o.metalId FROM Order o where o.id = 1;
