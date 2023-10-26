@@ -33,8 +33,38 @@ class OrdersView:
                     "price": single_metal['price']
                 }
                 dictionary_order['metal'] = metal
-            else:
-                pass
+            if '_expand' in parsed_url['query_params'] and 'style' in parsed_url['query_params']['_expand']:
+                fk = dictionary_order['styleId']
+                sql = """SELECT
+                s.id,
+                s.style,
+                s.price
+                FROM Styles s
+                WHERE s.id = ?
+                """
+                single_style = db_get_single(sql, fk)
+                style = {
+                    "id": single_style['id'],
+                    "style": single_style['style'],
+                    "price": single_style['price']
+                }
+                dictionary_order['style'] = style
+            if '_expand' in parsed_url['query_params'] and 'size' in parsed_url['query_params']['_expand']:
+                fk = dictionary_order['sizeId']
+                sql = """SELECT
+                s.id,
+                s.carats,
+                s.price
+                FROM Sizes s
+                WHERE s.id = ?
+                """
+                single_size = db_get_single(sql, fk)
+                size = {
+                    "id": single_size['id'],
+                    "carats": single_size['carats'],
+                    "price": single_size['price']
+                }
+                dictionary_order['size'] = size
             serialized_order = json.dumps(dictionary_order)
             return handler.response(serialized_order, status.HTTP_200_SUCCESS.value)
         else:
