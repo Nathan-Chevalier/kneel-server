@@ -1,6 +1,6 @@
 import json
 from nss_handler import status
-from repository import db_get_single, db_get_all, db_create
+from repository import db_get_single, db_get_all, db_create, db_delete
 
 class OrdersView:
     def get(self, handler, pk):
@@ -100,24 +100,26 @@ class OrdersView:
                         "metalId": row['metalId'],
                         "sizeId": row['sizeId'],
                     }
-                    if 'metal' in parsed_url['query_params']['_expand']:
-                        orders[order_id]['metal'] = {
-                            "id": row['metal_id'],
-                            "metal": row['metal'], 
-                            "price": row['metal_price']
-                        }
-                    if 'size' in parsed_url['query_params']['_expand']:
-                        orders[order_id]['size'] = {
-                            "id": row['size_id'],
-                            "carats": row['carats'],
-                            "price": row['size_price']
-                        }
-                    if 'style' in parsed_url['query_params']['_expand']:
-                        orders[order_id]['style'] = {
-                            "id": row['style_id'],
-                            "style": row['style'],
-                            "price": row['style_price']
-                        }
+                    if 'query_params' in parsed_url and '_expand' in parsed_url['query_params']:
+                        if 'metal' in parsed_url['query_params']['_expand']:
+                            orders[order_id]['metal'] = {
+                                "id": row['metal_id'],
+                                "metal": row['metal'], 
+                                "price": row['metal_price']
+                            }
+                        if 'size' in parsed_url['query_params']['_expand']:
+                            orders[order_id]['size'] = {
+                                "id": row['size_id'],
+                                "carats": row['carats'],
+                                "price": row['size_price']
+                            }
+                        if 'style' in parsed_url['query_params']['_expand']:
+                            orders[order_id]['style'] = {
+                                "id": row['style_id'],
+                                "style": row['style'],
+                                "price": row['style_price']
+                            }
+
 
 
             serialized_orders = json.dumps(list(orders.values()))
@@ -147,4 +149,8 @@ class OrdersView:
         return handler.response("", status.HTTP_405_UNSUPPORTED_METHOD.value)
     
     def delete(self, handler, pk):
-        return handler.response("", status.HTTP_405_UNSUPPORTED_METHOD.value)
+        number_of_row_deleted = db_delete("DELETE FROM Orders where id = ?", pk)
+        if number_of_row_deleted > 0:
+            return handler.response("", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value)
+        else:
+            return handler.response("", status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value)
