@@ -59,24 +59,22 @@ INSERT INTO Orders ('styleId', 'sizeId', 'metalId') VALUES (2, 3, 1);
 INSERT INTO Orders ('styleId', 'sizeId', 'metalId') VALUES (4, 5, 3);
 INSERT INTO Orders ('styleId', 'sizeId', 'metalId') VALUES (5, 1, 4);
 
--- TEST QUERIES
-
-SELECT 
-    m.id,
-    m.metal,
-    m.price
-FROM Metals m;
-
 SELECT
-    m.id,
-    m.metal,
-    m.price
-FROM Metals m
-WHERE m.id = ?;
-
-SELECT
-m.id,
-m.metal,
-m.price
-FROM Metals m
-WHERE m.id = 1;
+o.id,
+o.styleId,
+o.metalId,
+o.sizeId,
+Styles.id AS style_id,
+Styles.style AS style,
+Styles.price AS style_price,
+Metals.id AS metal_id,
+Metals.metal AS metal,
+Metals.price AS metal_price,
+Sizes.id AS size_id,
+Sizes.carats AS carats,
+Sizes.price AS size_price
+FROM Orders o
+LEFT JOIN Styles ON o.styleId = Styles.id
+LEFT JOIN Metals ON o.metalId = Metals.id
+LEFT JOIN Sizes ON o.sizeId = Sizes.id
+GROUP BY o.id;

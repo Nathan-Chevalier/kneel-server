@@ -68,10 +68,59 @@ class OrdersView:
             serialized_order = json.dumps(dictionary_order)
             return handler.response(serialized_order, status.HTTP_200_SUCCESS.value)
         else:
+            super_query = """
+            SELECT
+            o.id,
+            o.styleId,
+            o.metalId,
+            o.sizeId,
+            Styles.id AS style_id,
+            Styles.style AS style,
+            Styles.price AS style_price,
+            Metals.id AS metal_id,
+            Metals.metal AS metal,
+            Metals.price AS metal_price,
+            Sizes.id AS size_id,
+            Sizes.carats AS carats,
+            Sizes.price AS size_price
+            FROM Orders o
+            LEFT JOIN Styles ON o.styleId = Styles.id
+            LEFT JOIN Metals ON o.metalId = Metals.id
+            LEFT JOIN Sizes ON o.sizeId = Sizes.id
+            GROUP BY o.id
+            """
+            base_sql = db_get_all(super_query)
+            orders = {}
+            for row in base_sql:
+                order_id = row['id']
+                if order_id not in orders:
+                    orders[order_id] = {
+                        "id": order_id,
+                        "styleId": row['styleId'],
+                        "metalId": row['metalId'],
+                        "sizeId": row['sizeId'],
+                    }
+                    if 'metal' in parsed_url['query_params']['_expand']:
+                        orders[order_id]['metal'] = {
+                            "id": row['metal_id'],
+                            "metal": row['metal'], 
+                            "price": row['metal_price']
+                        }
+                    if 'size' in parsed_url['query_params']['_expand']:
+                        orders[order_id]['size'] = {
+                            "id": row['size_id'],
+                            "carats": row['carats'],
+                            "price": row['size_price']
+                        }
+                    if 'style' in parsed_url['query_params']['_expand']:
+                        orders[order_id]['style'] = {
+                            "id": row['style_id'],
+                            "style": row['style'],
+                            "price": row['style_price']
+                        }
 
-            query_results = db_get_all("SELECT o.id, o.styleId, o.sizeId, o.metalId FROM Orders o")
-            orders = [dict(row) for row in query_results]
-            serialized_orders = json.dumps(orders)
+
+            serialized_orders = json.dumps(list(orders.values()))
 
             return handler.response(serialized_orders, status.HTTP_200_SUCCESS.value)
     
